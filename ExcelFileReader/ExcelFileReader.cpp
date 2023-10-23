@@ -12,7 +12,8 @@ int main()
     {
         for (auto cell : row)
         {
-            std::clog << cell.to_string() << std::endl;
+            xlnt::cell_reference cellRef(cell.column_index(), cell.row());
+            std::clog << cellRef.to_string() << ": " << cell.to_string() << std::endl;
         }
     }
     std::clog << "Processing complete" << std::endl;
