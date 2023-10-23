@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
     xlnt::workbook wb;
-    wb.load("/home/timothymccallum/test.xlsx");
+    wb.load("D:/Test.xlsx");
     auto ws = wb.active_sheet();
     std::clog << "Processing spread sheet" << std::endl;
     for (auto row : ws.rows(false))
