@@ -18,7 +18,9 @@ Excel file can't be open during running program
 Things to improve:
 
 *Cloning more cloning files if there is already copy of original file 
- 
+
+*Cloning to diffrent location than original file path 
+
 *The program crashes due to not limiting the memory, e.g. with a conditional instruction
 
 Unhandled exception at 0x00007FFD1DB74FFC in Project3.exe: Microsoft C++ exception: std::length_error at memory location 0x0000001D09AFECD0.
