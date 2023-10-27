@@ -9,13 +9,10 @@
 
 using namespace std;
 
-int row_number1, col_number1, row_number2, col_number2;//global variables
+string announcement; //global variable
 
-pair <string, string> CopyFile(string originalFileName)
-{
-    string newFileName = "excel_new.xlsx";  //new file name
-    string announcement;
-
+string CopyFile(string originalFileName, string newFileName)
+{  
     ifstream source(originalFileName, ios::binary); //opening file in binary mode
     ofstream dest(newFileName, ios::binary); //saving file to new one   
 
@@ -28,7 +25,7 @@ pair <string, string> CopyFile(string originalFileName)
     else {
         announcement = "An error occurred while copying and renaming the file.";
     }
-    return make_pair(newFileName, announcement);
+    return newFileName;
 }
 
 int titleToNumber(string s)
@@ -59,72 +56,92 @@ pair <int, int> signs_numbers_separately(string cell_input)
 
 int main()
 {
-    string originalFileName;
-    cout << "Provide the excel file path: " << endl;
+    int i, j;
+    string newFileName, originalFileName, cell_input1, cell_input2;
+
+
+    cout << "Provide the excel original file path: " << endl;
     cin >> originalFileName;
+    cout << "Provide the excel new file path" << endl;
+    cin >> newFileName;
 
     //Opening Excel workbook and worksheet
     xlnt::workbook wb;
     xlnt::worksheet ws;
 
+    string newName = CopyFile(originalFileName, newFileName);
+
     //Loading excel file
     try {
-        wb.load(CopyFile(originalFileName).first);  // excel file path
+        wb.load(newName);  // excel file path
         ws = wb.active_sheet();//getting active worksheet from workbook
+        
     }
     catch (const xlnt::exception& e) {
         cout << RED << "Processing failed " << RESET << e.what() << std::endl;//displaying an error message when trying to read a file
         return 1;
     }
 
-    string cell_input1, cell_input2;
+    
 
     cout << "Podaj pierwsza komorke:";
     cin >> cell_input1;
 
 
-    col_number1 = signs_numbers_separately(cell_input1).first;
-    row_number1 = signs_numbers_separately(cell_input1).second;
+    int col_number1 = signs_numbers_separately(cell_input1).first;
+    int row_number1 = signs_numbers_separately(cell_input1).second;
 
     cout << "Podaj druga komorke:";
     cin >> cell_input2;
 
-    col_number2 = signs_numbers_separately(cell_input2).first;
-    row_number2 = signs_numbers_separately(cell_input2).second;
+    int col_number2 = signs_numbers_separately(cell_input2).first;
+    int row_number2 = signs_numbers_separately(cell_input2).second;
 
 
     //looping through (before) specified range
-    for (int i = row_number1; i < row_number2 + 1; i++)
+    for (i = row_number1; i < row_number2 + 1; i++)
     {
 
-        for (int j = col_number1; j < col_number2 + 1; j++)
+        for (j = col_number1; j < col_number2 + 1; j++)
         {
-
             //setting a new cell to the entered values(col and row)
             xlnt::cell cell = ws.cell(i, j);
-            cout << cell.value<float>();
-            
+            float x = cell.value<float>();            
+                       
+
+            if (cell.has_value())
+            {
+                cout << cell.value<int>();
+                               
+                if (x >= 0 && x < 30)
+                    cell.fill(xlnt::fill::solid(xlnt::rgb_color(242, 34, 15)));
+                else if (x >= 30 && x < 50)
+                    cell.fill(xlnt::fill::solid(xlnt::rgb_color(242, 160, 7)));
+                else if (x >= 50 && x < 75)
+                    cell.fill(xlnt::fill::solid(xlnt::rgb_color(5, 242, 108)));
+                else if (x >= 75 && x < 90)
+                    cell.fill(xlnt::fill::solid(xlnt::rgb_color(5, 151, 242)));
+                else if (x >= 90 && x < 100)
+                    cell.fill(xlnt::fill::solid(xlnt::rgb_color(178, 37, 217)));
+                cout << " ";
+            }    
+            else
+            {
+                cout << "0";
+                cout << " ";
+            }
+                 
             //cell.clear_style();
            
-            if(cell.value<float>() < 30)
-                cell.fill(xlnt::fill::solid(xlnt::rgb_color(242, 34, 15)));
-            else if(cell.value<float>() >=30 && cell.value<float>() < 50)
-                cell.fill(xlnt::fill::solid(xlnt::rgb_color(242, 160, 7)));
-            else if(cell.value<float>() >=50 && cell.value<float>() < 75)
-                cell.fill(xlnt::fill::solid(xlnt::rgb_color(5, 242, 108))); 
-            else if(cell.value<float>() >= 75 && cell.value<float>() < 90)
-                cell.fill(xlnt::fill::solid(xlnt::rgb_color(5, 151, 242)));
-            else if(cell.value<float>() >= 90 && cell.value<float>() <100 )
-                cell.fill(xlnt::fill::solid(xlnt::rgb_color(178, 37, 217)));
-            cout << " ";
+            
         }
         cout << endl;
     }
         
     
 
-    wb.save(CopyFile(originalFileName).first);
-    CopyFile(originalFileName).second;
+    wb.save(newName);
+    cout << announcement << endl;
 
     cout << GREEN << "Processing succeed :)" << RESET;
 }
